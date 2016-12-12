@@ -6,3 +6,12 @@ body {
 a {
   color: #00B7FF;
 }
+
+h1 {
+  color: midnightblue;
+  font: 30px "Avenir Next", Helvetica, Arial, sans-serif;
+}
+h2 {
+  color: #00B7FF;
+  font: 20px "Avenir Next", Helvetica, Arial, sans-serif;
+}

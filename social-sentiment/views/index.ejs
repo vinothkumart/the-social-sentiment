@@ -32,7 +32,8 @@
 
 <script type="text/ng-template" id="/home.html">
   <div class="page-header">
-    <h1>Current News</h1>
+    <h1>The Social Sentiment</h1>
+    <h2>Trending news</h2>
   </div>
 
   <div ng-repeat="post in posts | orderBy: '-upvotes'">
@@ -43,8 +44,12 @@
       {{post.title}}
     </span>
     <span>
-      <a href="#/posts/{{$index}}">Comments</a>
+      <a href="#/posts/{{post._id}}">Comments ({{post.comments.length}})</a>
       </span>
+
+    <span style="float: right;" ng-click="deletePost(post)">
+				<a href="#"> Delete </a>
+			</span>
   </div>
   </div>
 </script>
