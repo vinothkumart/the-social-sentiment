@@ -13,6 +13,10 @@
     "express": "~4.14.0",
     "mongoose": "^4.7.2",
     "morgan": "~1.7.0",
-    "serve-favicon": "~2.3.0"
+    "news-api-njs": "^0.2.1",
+    "newsapi": "^1.0.2",
+    "serve-favicon": "~2.3.0",
+    "twitter": "^1.7.0",
+    "watson-developer-cloud": "^2.13.1"
   }
 }
