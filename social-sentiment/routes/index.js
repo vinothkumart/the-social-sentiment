@@ -1,38 +1,6 @@
+
 var express = require('express');
 var router = express.Router();
-var newsapi = require('newsapi');
-var watson = require('watson-developer-cloud');
-var alchemy_language = watson.alchemy_language({
-  api_key: '46fb1b88c58b473b36326e142fdd9f89abefcaa9'
-});
-
-//var news = new newsapi('367e035b33ac4bb888852c472e20f6ad');
-var NewsApi = require('news-api-njs');
-
-var news = new NewsApi({
-    apiKey: '367e035b33ac4bb888852c472e20f6ad'
-});
-news.getArticles({
-    source: 'cnn',
-    sortBy: 'top'
-}).then(function(res) {
-    //console.log(res.articles);
-}).catch(function(err) {
-    console.log(err);
-});
-
-
-
-/*var parameters = {
-    text: 'War in Syria'
-};
-
-alchemy_language.keywords(parameters, function (err, response) {
-    if (err)
-        console.log('error:', err);
-    else
-        console.log(JSON.stringify(response, null, 2));
-});*/
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -54,7 +22,6 @@ router.get('/posts', function(req, res, next) {
     });
 });
 // Create new post
-/*
 router.post('/posts', function(req, res, next) {
     var post = new Post(req.body);
 
@@ -64,18 +31,6 @@ router.post('/posts', function(req, res, next) {
         res.json(post);
     });
 });
-*/
-
-router.post('/posts', function(req, res, next) {
-        var post = new Post(req.body);
-        post.save(function(err, post) {
-            if(err) { return next(err); }
-
-            res.json(post);
-        });
-    });
-
-
 // Map logic to route parameter 'post'
 router.param('post', function(req, res, next, id) {
     var query = Post.findById(id);

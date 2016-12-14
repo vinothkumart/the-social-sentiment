@@ -11,15 +11,18 @@ mongoose.connect('mongodb://localhost/news');
 require('./models/Posts');
 require('./models/Comments');
 require('./models/News');
+require('./models/Keywords');
 //require('./models/Tweets');
 
 
 var News = mongoose.model('News');
+var Keywords = mongoose.model('Keyword');
 var Post = mongoose.model('Post');
+
 // Require APIs
 var NewsApi = require('news-api-njs');	//*****
-    //config = require('./config');
-//var watson = require('watson-developer-cloud');	//******
+var watson = require('watson-developer-cloud');	//******
+var Twitter = require('twitter');	//*******
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -40,8 +43,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
-
-//app.use('/', models);	//************
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -76,7 +77,30 @@ app.use(function(err, req, res, next) {
 
 //***********************************************************
 
+//clearing all databases
+/*News.remove(function (err, removed) {
+    if(err) {
+        console.log('Error deleting News');
+        return (err.message);
+    }
+    console.log(removed, ' News removed.');
+});
 
+Keywords.remove(function (err, removed) {
+    if(err) {
+        console.log('Error deleting Keywords');
+        return (err.message);
+    }
+    console.log(removed, ' Keywords removed.');
+});
+
+Post.remove(function (err, removed) {
+    if(err) {
+        console.log('Error deleting Post');
+        return (err.message);
+    }
+    console.log(removed, ' Post removed.');
+});*/
 
 //Calling the news api
 var heads = new NewsApi({
@@ -91,43 +115,68 @@ heads.getArticles({
     arts.forEach(function (art) {
         //console.log(art);
         var n = new Post(art);
-        n.save(function (err, data) {
-            if(err) {
-                return next(err);
+        n.save(function(err, result) {
+            if (err) {
+                console.log('Error while saving keyword object');
+                return (err.message);
             }
-            console.log(data);
-            //res.send(data);
-        });
-        /*var news_data = {
-         author: art.author,
-         title: art.title,
-         description: art.description,
-         url: art.url
-         };*/
-        //console.log(news_data);
 
+            //console.log(result);
+            //res.json(comment);
+        });
     });
 }).catch(function(err) {
     console.log(err);
-
 });
 
-/*//calling the keywords api
- var alchemy_language = watson.alchemy_language({
- api_key: '46fb1b88c58b473b36326e142fdd9f89abefcaa9'
- })
 
- var parameters = {
- text: 'War in Syria'
- };
+//******Get key and then tweets********
+/*var client = new Twitter({
+ consumer_key: 'X9mgCBnxIIUmkjObQ2yuoWjm3',
+ consumer_secret: 'byV12kv08CeoM3ZMWEMTsBIix1i8zHA55WoBe29IKu474IWhbW',
+ access_token_key: '3569379857-vZfRsTngbVMuPuzYwn4qa1kfSoFqORZ5qzxlydG',
+ access_token_secret: 'AiYmqtzmRSLrpGBcosxWiia6CAmycHfVD08jeaIkynEAU'
+ });*/
 
- alchemy_language.keywords(parameters, function (err, response) {
- if (err)
- console.log('error:', err);
- else
- console.log(JSON.stringify(response, null, 2));
- });
- */
+var alchemy_language = watson.alchemy_language({
+    api_key: '2cef21d3c0cc83a608c987f6a5b80a1717e8499f'
+});
+
+var bulletin = Post.find(function (error, set) {
+    if(error) {
+        console.log('Error while finding news');
+        return (error.message);
+    }
+
+    //console.log(set);
+    set.forEach(function (newspost) {
+        //console.log(newspost.title);
+        var str = {
+            text: newspost.title
+        };
+        //console.log(str);	//passed
+
+        alchemy_language.keywords(str, function (err, response) {
+            if(err) {
+                console.log('Error while extracting keywords: ', err);
+                return (err.message);
+            }
+
+            //console.log(response);
+            var keys = JSON.parse(JSON.stringify(response.keywords));
+
+            var searchstring = '';
+            keys.forEach(function (word) {
+                console.log('Word: ', word);
+                searchstring = searchstring.concat("", word.text);
+            });
+
+            console.log('Searchstring : ', searchstring);
+        });
+    });
+});
+
+
 //************************************************************
 
 module.exports = app;
